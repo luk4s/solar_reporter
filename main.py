@@ -87,7 +87,7 @@ class SolarReport:
         return self._influxClient
 
 
-print(f"SolarParser v{open('VERSION', 'r').readline()}")
+print(f"SolarParser v{open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r').readline()}")
 
 
 def main():
