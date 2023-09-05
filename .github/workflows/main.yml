@@ -43,9 +43,9 @@ jobs:
 
       - name: Build and push image with custom tag
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }} .
-          docker push ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }}
+          docker build -t ghcr.io/${{ github.repository_owner }}/solar_reporter:${{ needs.prepare-tag.outputs.image_tag }} .
+          docker push ghcr.io/${{ github.repository_owner }}/solar_reporter:${{ needs.prepare-tag.outputs.image_tag }}
 
       - name: Run pytest in the container
         run: |
-          docker run ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }} pytest tests/
+          docker run ghcr.io/${{ github.repository_owner }}/solar_reporter:${{ needs.prepare-tag.outputs.image_tag }} pytest tests/
