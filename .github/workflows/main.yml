@@ -20,10 +20,10 @@ jobs:
         id: define-tag
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "::set-output name=tag::$(cat VERSION)"
+            echo "tag=$(cat VERSION)" >> $GITHUB_OUTPUT
           else
             BRANCH_NAME=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed 's/\//-/g')
-            echo "::set-output name=tag::${BRANCH_NAME}-$(cat VERSION)"
+            echo "tag=${BRANCH_NAME}-$(cat VERSION)" >> $GITHUB_OUTPUT
           fi
 
   build-and-push:
@@ -48,4 +48,4 @@ jobs:
 
       - name: Run pytest in the container
         run: |
-          docker run ghcr.io/${{ github.repository_owner }}/solar_reporter:${{ needs.prepare-tag.outputs.image_tag }} pytest tests/
+          docker run --rm -w /app --entrypoint "pytest" ghcr.io/${{ github.repository_owner }}/solar_reporter:${{ needs.prepare-tag.outputs.image_tag }}
