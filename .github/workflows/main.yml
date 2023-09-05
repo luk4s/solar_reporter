@@ -1,0 +1,51 @@
+name: Build, Push and Test
+
+on:
+  push:
+    branches:
+      - main
+      - '**'
+
+jobs:
+  prepare-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.define-tag.outputs.tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Define image tag
+        id: define-tag
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "::set-output name=tag::$(cat VERSION)"
+          else
+            BRANCH_NAME=$(echo "${{ github.ref }}" | sed -e 's/refs\/heads\///' | sed 's/\//-/g')
+            echo "::set-output name=tag::${BRANCH_NAME}-$(cat VERSION)"
+          fi
+
+  build-and-push:
+    needs: prepare-tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image with custom tag
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }} .
+          docker push ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }}
+
+      - name: Run pytest in the container
+        run: |
+          docker run ghcr.io/${{ github.repository_owner }}/your-image-name:${{ needs.prepare-tag.outputs.image_tag }} pytest tests/
