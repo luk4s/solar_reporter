@@ -8,7 +8,7 @@ DATA_MAP = {
     "BatSoc(%)": "battery_level",
     "BatVolt(V)": "battery_voltage",
     "ChargeCurr(A)": "battery_current",
-    "GridCurr(V)": "grid_voltage",
+    "Mains voltage(V)": "grid_voltage",
     "Grid current(A)": "grid_current",
     "PV voltage(V)": "solar_voltage",
     "PV charging current(A)": "solar_current",
@@ -67,6 +67,7 @@ class SolarReport:
     #     return df.to_dict(orient='records')
 
     def write_data(self, data):
+        points = []
         for row in data:
             point = Point("ea_sun")
             point.time(row["Timestamp"].to_pydatetime())
@@ -74,7 +75,9 @@ class SolarReport:
 
             for name, value in row.items():
                 point.field(name, value)
-            self.influx_client.write(database=os.environ["INFLUXDB_BUCKET"], record=point)
+            points.append(point)
+
+        self.influx_client.write(database=os.environ["INFLUXDB_BUCKET"], record=points)
 
     @property
     def influx_client(self):
