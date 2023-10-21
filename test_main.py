@@ -7,7 +7,7 @@ from influxdb_client_3 import InfluxDBClient3, Point
 
 @pytest.fixture
 def test_file_path():
-    return "fixtures/dess_example_2023-08-25.xlsx"
+    return "fixtures/dess_example_2023-10-13.xlsx"
 
 
 @pytest.fixture
