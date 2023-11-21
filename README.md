@@ -14,6 +14,12 @@ docker build -t solar_reporter:latest .
 | `INFLUXDB_TOKEN`  | secret token              |
 | `INFLUXDB_BUCKET` | name of bucket            |
 | `INFLUXDB_ORG`    | org name                  |
+| `DESS_SECRET`     | secret  of `dessmonitor`  |
+| `DESS_TOKEN`      | api token of `dessmonitor`|
+| `DESS_PN`         | get from dessmonitor      |
+| `DESS_SN`         | get from dessmonitor      |
+| `DESS_DEVCODE`    | unique code of monitored dev |
+| `DESS_DEVADDR`    | code of address of device |
 
 ## Usage
 
@@ -23,19 +29,31 @@ You can install python dependencies by pip:
 pip install -r requirements.txt
 ```
 
-and then run `main.py` with all files downloaded from http://www.dessmonitor.com as arguments:
+and then run `main.py` with *dates for downloaded report from http://www.dessmonitor.com:
 
 ```shell
-python main.py *.xlsx
+python main.py YYYY-mm-dd YYYY-mm-dd
 ```
 
 OR use docker
 
 ```shell
-docker run --rm -v `pwd`:/files --env-file .env solar_reporter:latest *.xlsx
+docker run --rm -v `pwd`:/files --env-file .env solar_reporter:latest YYYY-mm-dd YYYY-mm-dd
 ```
 note: make sure you have correctly filled env variables
 
+### use API of DESS
+First you need obtaion `secret` and `token` from https://dessmonitor.com.
+
+```javascript
+const secret = sessionStorage.getItem("secret")
+const token = sessionStorage.getItem("token")
+alert(`export DESS_SECRET="${secret}"\nexport DESS_TOKEN="${token}"\n`)
+```
+
+Then put it into `.env` file. Tokens expires in 7.days => then need obtain again manually from browser after loggin.
+
+@see http://api.dessmonitor.com/chapter1/QuickStart.htmlg
 ## Tests
 
 ```shell

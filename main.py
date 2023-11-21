@@ -3,6 +3,8 @@ import sys
 import os
 from influxdb_client_3 import InfluxDBClient3, Point
 import pandas as pd
+from api import DessAPI
+import tempfile
 
 DATA_MAP = {
     "BatSoc(%)": "battery_level",
@@ -95,17 +97,32 @@ print(f"SolarParser v{open(os.path.join(os.path.dirname(__file__), 'VERSION'), '
 
 def main():
     if len(sys.argv) == 1:
-        raise ValueError("No files provided as arguments.")
+        raise ValueError("No dates for download provided as arguments.")
 
-    # _script_name = sys.argv[0]
-    file_names = sys.argv[1:]
+    dates = sys.argv[1:]
 
-    for file_name in file_names:
-        print(f"Processing file: {file_name}\n")
-        app = SolarReport(file_name)
-        data = app.parsed_data()
-        app.write_data(data)
-
+    for date in dates:
+        api = DessAPI("exportDeviceDataDetail")
+        params = {
+            'source': '1',
+            'page': '0',
+            'pagesize': '15',
+            'i18n': 'en_US',
+            'pn': os.environ['DESS_PN'],
+            'devcode': os.environ['DESS_DEVCODE'],
+            'devaddr': os.environ['DESS_DEVADDR'],
+            'sn': os.environ['DESS_SN'],
+            'date': date,
+        }
+        response = api.get(**params)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            # Write the response content to the temporary file
+            temp_file.write(response.content)
+            # Get the name of the file
+            app = SolarReport(temp_file.name)
+            data = app.parsed_data()
+            app.write_data(data)
+        
 
 if __name__ == "__main__":
     main()
