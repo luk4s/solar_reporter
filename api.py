@@ -3,6 +3,9 @@ import hashlib
 import os
 import time
 
+class DessApiException(Exception):
+    pass
+
 class DessAPI:
     def __init__(self, action):
         self.secret = os.getenv("DESS_SECRET")
@@ -34,4 +37,9 @@ class DessAPI:
         # print("&".join([f"{key}={value}" for key, value in {**params, **other_params}.items()]))
         url = "http://web.dessmonitor.com/public/"
         response = requests.get(url, params={**params, **other_params})
+        if response.status_code != 200:
+            raise DessApiException(f"API returned status code {response.status_code}")
+        if "Content-disposition" not in response.headers:
+            raise DessApiException("API returned no data - probably expired token & secret.")
+        
         return response

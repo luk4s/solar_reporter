@@ -32,13 +32,13 @@ pip install -r requirements.txt
 and then run `main.py` with *dates for downloaded report from http://www.dessmonitor.com:
 
 ```shell
-python main.py YYYY-mm-dd YYYY-mm-dd
+python main.py report YYYY-mm-dd YYYY-mm-dd
 ```
 
 OR use docker
 
 ```shell
-docker run --rm -v `pwd`:/files --env-file .env solar_reporter:latest YYYY-mm-dd YYYY-mm-dd
+docker run --rm -v `pwd`:/files --env-file .env solar_reporter:latest report YYYY-mm-dd YYYY-mm-dd
 ```
 note: make sure you have correctly filled env variables
 
