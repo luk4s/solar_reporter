@@ -48,7 +48,7 @@ First you need obtaion `secret` and `token` from https://dessmonitor.com.
 ```javascript
 const secret = sessionStorage.getItem("secret")
 const token = sessionStorage.getItem("token")
-alert(`export DESS_SECRET="${secret}"\nexport DESS_TOKEN="${token}"\n`)
+alert(`DESS_SECRET="${secret}"\nDESS_TOKEN="${token}"\n`)
 ```
 
 Then put it into `.env` file. Tokens expires in 7.days => then need obtain again manually from browser after loggin.

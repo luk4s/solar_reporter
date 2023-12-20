@@ -3,18 +3,18 @@ from influxdb_client_3 import InfluxDBClient3, Point
 import pandas as pd
 
 DATA_MAP = {
-    "BatSoc(%)": "battery_level",
-    "BatVolt(V)": "battery_voltage",
-    "ChargeCurr(A)": "battery_current",
+    "Battery level SOC(%)": "battery_level",
+    "Battery voltage(V)": "battery_voltage",
+    "Battery current(A)": "battery_current",
     "Mains voltage(V)": "grid_voltage",
     "Grid current(A)": "grid_current",
     "PV voltage(V)": "solar_voltage",
     "PV charging current(A)": "solar_current",
     "PV charging power(W)": "solar_power",
-    "Load active(W)": "load_active",
-    "PV power generation on the day(kWh)": "solar_acumulated_energy",
-    "Load power consumption on the day(kWh)": "load_acumulated_energy",
-    "Power consumption from the mains on the day of the load(kWh)": "grid_acumulated_energy"
+    "Load active power(W)": "load_active",
+    "PV daily power generation(kWh)": "solar_acumulated_energy",
+    "Electricity consumption on the day of load(kWh)": "load_acumulated_energy",
+    "Consumption of municipal electricity on the day of load(kWh)": "grid_acumulated_energy"
 }
 
 
