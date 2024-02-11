@@ -5,7 +5,7 @@ import os
 from api import DessAPI
 import tempfile, shutil
 from solar_report import SolarReport
-
+from datetime import datetime, timedelta
 
 print(f"SolarParser v{open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r').readline()}")
 
@@ -32,7 +32,24 @@ def main():
 
     # Download command
     download_parser = subparsers.add_parser('download', help='Download report for a date')
-    download_parser.add_argument('dates', nargs='+', type=str, help='Date(s) for download')
+    def daterange(start_date, end_date):
+        for n in range(int((end_date - start_date).days) + 1):
+            yield start_date + timedelta(n)
+
+    def date_range_type(args):
+        if ".." in args[0]:
+            try:
+                start_date, end_date = args[0].split('..')
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                dates = [str(date) for date in daterange(start_date, end_date)]
+                return dates
+            except ValueError:
+                raise argparse.ArgumentTypeError("Invalid date range format. Please use YYYY-MM-DD..YYYY-MM-DD.")
+        else:
+            return args
+
+    download_parser.add_argument('dates', type=str, nargs='+', help='Date range for download (YYYY-MM-DD or YYYY-MM-DD..YYYY-MM-DD)')
     download_parser.add_argument('--path', type=str, required=False, default="./", help='Path to save the file')
 
     # Report command
@@ -40,11 +57,11 @@ def main():
     upload_parser.add_argument('dates', nargs='+', type=str, help='Date(s) for reporting')
 
     args = parser.parse_args()
-    
+    dates_list = date_range_type(args.dates)
     if args.command == 'download':
-        download(args.dates, path=args.path)
+        download(dates_list, path=args.path)
     elif args.command == 'report':
-        report(args.dates)
+        report(dates_list)
     else:
         parser.print_help()
 
